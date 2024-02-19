@@ -1,16 +1,20 @@
 const db = require('./db/connection');
+const fs = require('fs/promises');
+
 
 
 
 selectTopics = async () => {
-    try {
+
         const result = await db.query('SELECT * FROM topics;');
         return result.rows;
-    }
-    catch (error) {
-        console.log(error)
-        throw error;
-    }
 }
 
-module.exports = { selectTopics };
+readEndpointsFile = async () => {
+    
+        const endpointFilePending = await fs.readFile(`${__dirname}/endpoints.json`, 'utf-8');
+        const parsedFile = JSON.parse(endpointFilePending);
+        return parsedFile;
+}
+
+module.exports = { selectTopics, readEndpointsFile };
