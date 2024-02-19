@@ -42,9 +42,7 @@ describe('/api', () => {
         .expect(200)
         .then((response) => {
         expect(response.type).toBe('application/json');
-        Object.keys(apiEndpoints).forEach(endpoint => {
-            expect(response.body[endpoint]).toEqual(apiEndpoints[endpoint]);
-        })
+        expect(response.body).toEqual(apiEndpoints);
         });
     });
 });
