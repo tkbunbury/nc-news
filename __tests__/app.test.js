@@ -3,7 +3,8 @@ const request = require('supertest');
 const db = require('../db/connection');
 const seed = require('../db/seeds/seed');
 const data = require('../db/data/test-data/index');
-const apiEndpoints = require('../endpoints.json')
+const apiEndpoints = require('../endpoints.json');
+const { toBeSortedBy } = require('jest-sorted');
 
 beforeEach(() => seed(data));
 afterAll(() => db.end());
@@ -75,7 +76,6 @@ describe('/api/articles', () => {
         .get('/api/articles')
         .expect(200)
         .then((response) => {
-            console.log(response.body.articles, '<<<< artttytyt')
         expect(response.body.articles.length).toBe(13);
         response.body.articles.forEach((article) => {
             expect(typeof article.author).toBe('string');
@@ -94,11 +94,11 @@ describe('/api/articles', () => {
         .get('/api/articles')
         .expect(200)
         .then((response) => {
-        response.body.articles.forEach((article) => {
-            const currentCreatedAt = new Date(article.created_at).getTime();
-            const nextCreatedAt = new Date(article.created_at).getTime();
-            expect(currentCreatedAt).toBeGreaterThanOrEqual(nextCreatedAt);
-        });
+            const articles = response.body.articles;
+            expect(articles).toBeSortedBy('created_at', { 
+                descending: true,
+                coerce: true,
+            });
         });
     });
     test('No articles contain a body property', () => {
