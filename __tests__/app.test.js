@@ -68,3 +68,47 @@ describe('/api/articles/:article_id', () => {
         });
     });
 });
+
+describe('/api/articles', () => {
+    test('GET:200 sends an array of article objects to the client', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then((response) => {
+            console.log(response.body.articles, '<<<< artttytyt')
+        expect(response.body.articles.length).toBe(13);
+        response.body.articles.forEach((article) => {
+            expect(typeof article.author).toBe('string');
+            expect(typeof article.title).toBe('string');
+            expect(typeof article.article_id).toBe('number');
+            expect(typeof article.topic).toBe('string');
+            expect(typeof article.created_at).toBe('string');
+            expect(typeof article.votes).toBe('number');
+            expect(typeof article.article_img_url).toBe('string');
+            expect(typeof article.comment_count).toBe('number');
+        });
+        });
+    });
+    test('Articles are sorted in descending order based on created_at date', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then((response) => {
+        response.body.articles.forEach((article) => {
+            const currentCreatedAt = new Date(article.created_at).getTime();
+            const nextCreatedAt = new Date(article.created_at).getTime();
+            expect(currentCreatedAt).toBeGreaterThanOrEqual(nextCreatedAt);
+        });
+        });
+    });
+    test('No articles contain a body property', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then((response) => {
+        response.body.articles.forEach((article) => {
+            expect(article.body).toBeUndefined()
+        });
+        });
+    });
+});
