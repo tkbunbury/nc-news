@@ -1,6 +1,7 @@
 const {
     selectTopics,
     readEndpointsFile,
+    selectArticleById,
 
 } = require(`${__dirname}/model.js`)
 
@@ -25,4 +26,15 @@ async function getEndpoints (req, res, next) {
     }
 }
 
-module.exports = { getTopics, getEndpoints };
+async function getArticleById (req, res, next) {
+    try{
+        const { article_id } = req.params;
+        const article = await selectArticleById(article_id);
+        res.status(200).send( { article } )
+    }
+    catch (err) {
+        next(err)
+    }
+}
+
+module.exports = { getTopics, getEndpoints, getArticleById };
