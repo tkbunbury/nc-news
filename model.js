@@ -1,5 +1,6 @@
 const db = require('./db/connection');
 const fs = require('fs/promises');
+const articles = require('./db/data/test-data/articles');
 
 
 selectTopics = async () => {
@@ -28,4 +29,14 @@ selectArticleById = async (article_id) => {
     return articleWithString;
 }
 
-module.exports = { selectTopics, readEndpointsFile, selectArticleById };
+selectArticles = async () => {
+
+    const result = await db.query('SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.body) AS INTEGER) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url ;')
+    
+    const articles = result.rows;
+    const sortedArticles = [...articles];
+    sortedArticles.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+    return sortedArticles;
+}
+
+module.exports = { selectTopics, readEndpointsFile, selectArticleById, selectArticles };
