@@ -39,4 +39,19 @@ selectArticles = async () => {
     return sortedArticles;
 }
 
-module.exports = { selectTopics, readEndpointsFile, selectArticleById, selectArticles };
+selectCommentsByArticleId = async (article_id) => {
+    const result = await db.query('SELECT * FROM comments WHERE article_id = $1;', [article_id])
+    const comments = result.rows
+    if (!comments) {
+        return Promise.reject({
+            status: 404,
+            msg: `NO article found for article_id: ${article_id}`
+        })
+    }
+
+    const sortedComments = [...comments]
+    sortedComments.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+    return sortedComments
+}
+
+module.exports = { selectTopics, readEndpointsFile, selectArticleById, selectArticles, selectCommentsByArticleId };

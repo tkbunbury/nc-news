@@ -5,6 +5,7 @@ const seed = require('../db/seeds/seed');
 const data = require('../db/data/test-data/index');
 const apiEndpoints = require('../endpoints.json');
 const { toBeSortedBy } = require('jest-sorted');
+const comments = require('../db/data/test-data/comments');
 
 beforeEach(() => seed(data));
 afterAll(() => db.end());
@@ -109,6 +110,54 @@ describe('/api/articles', () => {
         response.body.articles.forEach((article) => {
             expect(article.body).toBeUndefined()
         });
+        });
+    });
+});
+
+describe('/api/articles/:article_id/comments', () => {
+    test('GET:200 sends an array of comment objects for the given article_id to the client', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then((response) => {
+            expect(response.body.length).toBe(11);
+            expect(Array.isArray(response.body)).toBe(true);
+            expect(response.body[1]).toMatchObject({
+                comment_id: 2,
+                votes: 14,
+                created_at: "2020-10-31T03:03:00.000Z",
+                author: "butter_bridge",
+                body:"The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+                article_id: 1,
+            })
+        })
+    })
+    test('Comments are sorted with the most recent comments first', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then((response) => {
+            const commentsArray = response.body;
+            expect(commentsArray).toBeSortedBy('created_at', {
+                descending: true,
+                coerce: true,
+            });
+        });
+    });
+    test('GET:404 sends an appropriate status and error message when given a valid but non-existent id', () => {
+        return request(app)
+        .get('/api/articles/999/comments')
+        .expect(404)
+        .then((response) => {
+            expect(response.body.msg).toBe('NO article found for article_id: 999');
+        });
+    });
+    test('GET:400 sends an appropriate status and error message when given an invalid id', () => {
+        return request(app)
+        .get('/api/articles/not-an-article/comments')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
         });
     });
 });
