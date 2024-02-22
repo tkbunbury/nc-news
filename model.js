@@ -54,4 +54,12 @@ selectCommentsByArticleId = async (article_id) => {
     return sortedComments
 }
 
-module.exports = { selectTopics, readEndpointsFile, selectArticleById, selectArticles, selectCommentsByArticleId };
+postNewCommentForArticle = async (article_id, dataObject) => {
+
+const result = await db.query('INSERT INTO comments (author, body, article_id, votes) VALUES ($1, $2, $3, $4) RETURNING *', [dataObject.username, dataObject.body, article_id, 0] )
+return result.rows[0]
+}
+
+
+
+module.exports = { selectTopics, readEndpointsFile, selectArticleById, selectArticles, selectCommentsByArticleId, postNewCommentForArticle };
