@@ -60,6 +60,19 @@ const result = await db.query('INSERT INTO comments (author, body, article_id, v
 return result.rows[0]
 }
 
+updateArticleVotes = async (article_id, dataObject) => {
+
+    const result = await db.query('UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *', [dataObject.inc_votes, article_id] )
+
+    if (!result.rows[0]) {
+        return Promise.reject({
+            status: 404,
+            msg: `NO article found for article_id: ${article_id}`
+        })
+    }
+    return result.rows[0]
+    }
 
 
-module.exports = { selectTopics, readEndpointsFile, selectArticleById, selectArticles, selectCommentsByArticleId, postNewCommentForArticle };
+
+module.exports = { selectTopics, readEndpointsFile, selectArticleById, selectArticles, selectCommentsByArticleId, postNewCommentForArticle, updateArticleVotes };

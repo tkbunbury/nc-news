@@ -184,7 +184,7 @@ describe('/api/articles/:article_id/comments', () => {
                 expect(typeof response.body.comment.created_at).toBe("string");
             })
         })
-        test('GET:404 sends an appropriate status and error message when given a valid but non-existent id', () => {
+        test('POST:404 sends an appropriate status and error message when given a valid but non-existent id', () => {
             const newComment = {
                 username: "icellusedkars",
                 body: "NEW COMMENT"
@@ -197,7 +197,7 @@ describe('/api/articles/:article_id/comments', () => {
                 expect(response.body.msg).toBe('Not Found');
             });
         });
-        test('GET:400 sends an appropriate status and error message when given an invalid id', () => {
+        test('POST:400 sends an appropriate status and error message when given an invalid id', () => {
             const newComment = {
                 username: "icellusedkars",
                 body: "NEW COMMENT"
@@ -235,4 +235,59 @@ describe('/api/articles/:article_id/comments', () => {
                 expect(response.body.msg).toBe('Bad request');
             });
         });
+
+
+    describe('/api/articles/:article_id', () => {
+        test('Status 200: Responds with object containing the article, with updated votes total', () => {
+            const updatedVotes = {
+                inc_votes: 10
+            }
+            return request(app)
+            .patch('/api/articles/3')
+            .send(updatedVotes)
+            .expect(200)
+            .then((response) => {
+                expect(typeof response.body.updatedArticle).toBe("object");
+                expect(response.body.updatedArticle).toMatchObject({
+                    article_id: 3,
+                    title: "Eight pug gifs that remind me of mitch",
+                    topic: "mitch",
+                    votes: 10,
+                    author: "icellusedkars",
+                    body:"some gifs",
+                    article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                })
+                expect(typeof response.body.updatedArticle.created_at).toBe("string");
+            })
+        })
+        test('PATCH:404 sends an appropriate status and error message when given a valid but non-existent id', () => {
+            return request(app)
+            .patch('/api/articles/999')
+            .expect(404)
+            .then((response) => {
+                expect(response.body.msg).toBe('Not Found');
+            });
+        });
+        test('PATCH:400 sends an appropriate status and error message when given an invalid id', () => {
+            return request(app)
+            .patch('/api/articles/not-an-article')
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe('Bad request');
+            });
+        });
+        test('PATCH:400 sends an appropriate error response for non-integer vote value', () => {
+            const newComment = {
+                inc_votes: 'A LOT OF VOTES'
+                
+            };
+            return request(app)
+            .patch('/api/articles/3')
+            .send(newComment)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe('Bad request');
+            });
+        });
+    });
 });
