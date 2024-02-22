@@ -85,6 +85,10 @@ removeCommentById = async (comment_id) => {
     return db.query('DELETE FROM comments WHERE comment_id = $1;', [comment_id]);
     };
 
+selectUsers = async () => {
+    const result = await db.query('SELECT * FROM users;');
+    return result.rows;
+}
 
 
-module.exports = { selectTopics, readEndpointsFile, selectArticleById, selectArticles, selectCommentsByArticleId, postNewCommentForArticle, updateArticleVotes, removeCommentById };
+module.exports = { selectTopics, readEndpointsFile, selectArticleById, selectArticles, selectCommentsByArticleId, postNewCommentForArticle, updateArticleVotes, removeCommentById, selectUsers };
