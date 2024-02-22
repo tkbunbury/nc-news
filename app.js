@@ -9,6 +9,7 @@ const {
     getCommentsByArticleId,
     postSingleCommentForArticle,
     patchArticleVotes,
+    deleteCommentById,
 
 } = require(`${__dirname}/controller.js`)
 
@@ -27,6 +28,8 @@ app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
 app.post('/api/articles/:article_id/comments', postSingleCommentForArticle)
 
 app.patch('/api/articles/:article_id', patchArticleVotes)
+
+app.delete('/api/comments/:comment_id', deleteCommentById)
 
 app.use((err, req, res, next) => {
     if (err.code === "22P02" || err.code === "23502") {
