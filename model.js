@@ -73,6 +73,18 @@ updateArticleVotes = async (article_id, dataObject) => {
     return result.rows[0]
     }
 
+removeCommentById = async (comment_id) => {
+    const result = await db.query('SELECT * FROM comments WHERE comment_id = $1;', [comment_id]);
+    
+    if (!result.rows[0]) {
+        return Promise.reject({
+            status: 404,
+            msg: `NO comment found for comment_id: ${comment_id}`
+        })
+    }
+    return db.query('DELETE FROM comments WHERE comment_id = $1;', [comment_id]);
+    };
 
 
-module.exports = { selectTopics, readEndpointsFile, selectArticleById, selectArticles, selectCommentsByArticleId, postNewCommentForArticle, updateArticleVotes };
+
+module.exports = { selectTopics, readEndpointsFile, selectArticleById, selectArticles, selectCommentsByArticleId, postNewCommentForArticle, updateArticleVotes, removeCommentById };

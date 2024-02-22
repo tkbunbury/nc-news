@@ -6,6 +6,7 @@ const {
     selectCommentsByArticleId,
     postNewCommentForArticle,
     updateArticleVotes,
+    removeCommentById,
 
 } = require(`${__dirname}/model.js`)
 
@@ -96,5 +97,17 @@ async function patchArticleVotes (req, res, next) {
 }
 
 
+async function deleteCommentById (req, res, next) {
+    try{
+        const { comment_id } = req.params;
+        const deletedComment = await removeCommentById(comment_id);
+        res.status(204).send();
+    }
+    catch (err) {
+        next(err)
+    }
+};
 
-module.exports = { getTopics, getEndpoints, getArticleById, getArticles, getCommentsByArticleId, postSingleCommentForArticle, patchArticleVotes };
+
+
+module.exports = { getTopics, getEndpoints, getArticleById, getArticles, getCommentsByArticleId, postSingleCommentForArticle, patchArticleVotes, deleteCommentById };
