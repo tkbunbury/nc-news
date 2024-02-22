@@ -5,6 +5,7 @@ const {
     selectArticles,
     selectCommentsByArticleId,
     postNewCommentForArticle,
+    updateArticleVotes,
 
 } = require(`${__dirname}/model.js`)
 
@@ -82,6 +83,18 @@ async function postSingleCommentForArticle (req, res, next) {
     }
 }
 
+async function patchArticleVotes (req, res, next) {
+    try{
+        const { article_id } = req.params;
+        const  dataObject  = req.body;
+        const updatedArticle = await updateArticleVotes(article_id, dataObject);
+        res.status(200).send( {updatedArticle} )
+    }
+    catch (err) {
+        next(err)
+    }
+}
 
 
-module.exports = { getTopics, getEndpoints, getArticleById, getArticles, getCommentsByArticleId, postSingleCommentForArticle };
+
+module.exports = { getTopics, getEndpoints, getArticleById, getArticles, getCommentsByArticleId, postSingleCommentForArticle, patchArticleVotes };
