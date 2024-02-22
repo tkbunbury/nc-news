@@ -4,6 +4,7 @@ const {
     selectArticleById,
     selectArticles,
     selectCommentsByArticleId,
+    postNewCommentForArticle,
 
 } = require(`${__dirname}/model.js`)
 
@@ -69,4 +70,18 @@ async function getCommentsByArticleId (req, res, next) {
     })
 }
 
-module.exports = { getTopics, getEndpoints, getArticleById, getArticles, getCommentsByArticleId };
+async function postSingleCommentForArticle (req, res, next) {
+    try{
+        const { article_id } = req.params;
+        const  dataObject  = req.body;
+        const comment = await postNewCommentForArticle(article_id, dataObject);
+        res.status(201).send( {comment} )
+    }
+    catch (err) {
+        next(err)
+    }
+}
+
+
+
+module.exports = { getTopics, getEndpoints, getArticleById, getArticles, getCommentsByArticleId, postSingleCommentForArticle };

@@ -58,7 +58,7 @@ describe('/api/articles/:article_id', () => {
         .get('/api/articles/999')
         .expect(404)
         .then((response) => {
-            expect(response.body.msg).toBe('NO article found for article_id: 999');
+            expect(response.body.msg).toBe('Not Found');
         });
     });
     test('GET:400 sends an appropriate status and error message when given an invalid id', () => {
@@ -149,7 +149,7 @@ describe('/api/articles/:article_id/comments', () => {
         .get('/api/articles/999/comments')
         .expect(404)
         .then((response) => {
-            expect(response.body.msg).toBe('NO article found for article_id: 999');
+            expect(response.body.msg).toBe('Not Found');
         });
     });
     test('GET:400 sends an appropriate status and error message when given an invalid id', () => {
@@ -160,4 +160,79 @@ describe('/api/articles/:article_id/comments', () => {
             expect(response.body.msg).toBe('Bad request');
         });
     });
+});
+
+    describe('/api/articles/:article_id/comments', () => {
+        test('Status 201: Responds with object containing the newly posted comment', () => {
+            const newComment = {
+                username: "icellusedkars",
+                body: "NEW COMMENT"
+            }
+            return request(app)
+            .post('/api/articles/2/comments')
+            .send(newComment)
+            .expect(201)
+            .then((response) => {
+                expect(typeof response.body.comment).toBe("object");
+                expect(response.body.comment).toMatchObject({
+                    comment_id: 19,
+                    votes: 0,
+                    author: "icellusedkars",
+                    body:"NEW COMMENT",
+                    article_id: 2,
+                })
+                expect(typeof response.body.comment.created_at).toBe("string");
+            })
+        })
+        test('GET:404 sends an appropriate status and error message when given a valid but non-existent id', () => {
+            const newComment = {
+                username: "icellusedkars",
+                body: "NEW COMMENT"
+            }
+            return request(app)
+            .post('/api/articles/999/comments')
+            .send(newComment)
+            .expect(404)
+            .then((response) => {
+                expect(response.body.msg).toBe('Not Found');
+            });
+        });
+        test('GET:400 sends an appropriate status and error message when given an invalid id', () => {
+            const newComment = {
+                username: "icellusedkars",
+                body: "NEW COMMENT"
+            }
+            return request(app)
+            .post('/api/articles/not-an-article/comments')
+            .send(newComment)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe('Bad request');
+            });
+        });
+        test('POST:400 sends an appropriate error response for missing username property', () => {
+            const newComment = {
+                body: "NEW COMMENT"
+            };
+            return request(app)
+            .post('/api/articles/2/comments')
+            .send(newComment)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe('Bad request');
+            });
+        });
+    
+        test('POST:400 sends an appropriate error response for missing body property', () => {
+            const newComment = {
+                username: "icellusedkars"
+            };
+            return request(app)
+            .post('/api/articles/2/comments')
+            .send(newComment)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe('Bad request');
+            });
+        });
 });

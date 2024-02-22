@@ -1,4 +1,5 @@
 const express = require('express');
+const { postNewCommentForArticle } = require('./model');
 const app = express();
 const {
     getTopics,
@@ -6,8 +7,11 @@ const {
     getArticleById,
     getArticles,
     getCommentsByArticleId,
+    postSingleCommentForArticle,
 
 } = require(`${__dirname}/controller.js`)
+
+app.use(express.json());
 
 app.get('/api/topics', getTopics)
 
@@ -19,8 +23,10 @@ app.get('/api/articles', getArticles)
 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
 
+app.post('/api/articles/:article_id/comments', postSingleCommentForArticle)
+
 app.use((err, req, res, next) => {
-    if (err.code === "22P02") {
+    if (err.code === "22P02" || err.code === "23502") {
         res.status(400).send({ msg: 'Bad request' });
     }
     else {
@@ -29,8 +35,8 @@ app.use((err, req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-    if (err.status === 404) {
-        res.status(404).send({ msg: 'NO article found for article_id: 999' });
+    if (err.status === 404 || err.code === "23503") {
+        res.status(404).send({ msg: 'Not Found' });
     }
     else {
         next(err);
