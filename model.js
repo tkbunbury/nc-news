@@ -45,7 +45,7 @@ selectCommentsByArticleId = async (article_id) => {
     if (!comments) {
         return Promise.reject({
             status: 404,
-            msg: `NO article found for article_id: ${article_id}`
+            msg: `NO comments found for article_id: ${article_id}`
         })
     }
 
