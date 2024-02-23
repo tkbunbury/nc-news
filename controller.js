@@ -12,6 +12,7 @@ const {
 } = require(`${__dirname}/model.js`)
 
 
+
 async function getTopics (req, res, next) {
     try{
         const topics = await selectTopics();
@@ -122,24 +123,5 @@ async function getUsers (req, res, next) {
         next(err)
     }
 }
-
-// async function getArticlesByTopic (req, res, next) {
-
-//     console.log('HELLLOOOOOO')
-//     try{
-//         const { topic } = req.query;
-//         console.log('HELLOOOOOO')
-
-//         console.log({ topic }, '<<<< query in controller')
-
-
-//         const articles = await selectArticlesByTopic(topic);
-//         res.status(200).send({ articles })
-//     }
-//     catch (err) {
-//         next(err)
-//     }
-// }
-
 
 module.exports = { getTopics, getEndpoints, getArticleById, getArticles, getCommentsByArticleId, postSingleCommentForArticle, patchArticleVotes, deleteCommentById, getUsers };

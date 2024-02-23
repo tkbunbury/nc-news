@@ -354,4 +354,22 @@ describe('/api/articles?topic=${topic}', () => {
         });
         });
     });
+    test('GET:404 sends an appropriate status and error message for an invalid topic', () => {
+        const topic = '4546565796867';
+        return request(app)
+        .get(`/api/articles?topic=${topic}`)
+        .expect(404)
+        .then((response) => {
+            expect(response.body.msg).toBe('Not Found');
+        });
+    });
+    test('GET:200 sends an empty array if there are no articles for a particular topic', () => {
+        const topic = 'paper';
+        return request(app)
+        .get(`/api/articles?topic=${topic}`)
+        .expect(200)
+        .then((response) => {
+            expect(response.body.articles).toEqual([]);
+        });
+    });
 });
