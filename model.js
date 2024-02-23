@@ -1,6 +1,6 @@
 const db = require('./db/connection');
 const fs = require('fs/promises');
-const articles = require('./db/data/test-data/articles');
+const { articleData, commentData, topicData, userData } = require(`${__dirname}/db/data/test-data/index.js`);
 
 
 selectTopics = async () => {
@@ -31,14 +31,25 @@ selectArticleById = async (article_id) => {
 selectArticles = async (topic = {}) => {
 
     let result;
+    const validTopics = topicData.map(topic => topic.slug);
+    let queryString = 'SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.body) AS INTEGER) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id'
 
     if (typeof topic === 'string' && topic.trim() !== '') {
-        result = await db.query('SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.body) AS INTEGER) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE topic = $1 GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url ;', [topic])
+
+        if (!validTopics.includes(topic)) {
+            return Promise.reject({
+                status: 404,
+            })
+        }
+        else {
+            queryString += ' WHERE topic = $1 GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url'
+            result = await db.query(queryString, [topic])
+        }        
     }
     else {
-        result = await db.query('SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.body) AS INTEGER) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url ;')
+        queryString += ' GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url'
+        result = await db.query(queryString);
     }
-
     const articles = result.rows;
     const sortedArticles = [...articles];
     sortedArticles.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
@@ -88,23 +99,5 @@ selectUsers = async () => {
     const result = await db.query('SELECT * FROM users;');
     return result.rows;
 }
-
-
-// selectArticlesByTopic = async (topic) => {
-
-//     if (topic) {
-
-//         const result = await db.query('SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.body) AS INTEGER) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE topic = $1 GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url ;', [topic])
-//     }
-//     else {
-//         const result = await db.query('SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.body) AS INTEGER) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url ;')
-//     }
-
-//     const articles = result.rows;
-//     const sortedArticles = [...articles];
-//     sortedArticles.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
-//     return sortedArticles;
-// }
-
 
 module.exports = { selectTopics, readEndpointsFile, selectArticleById, selectArticles, selectCommentsByArticleId, postNewCommentForArticle, updateArticleVotes, removeCommentById, selectUsers }
