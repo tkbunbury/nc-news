@@ -60,14 +60,9 @@ async function getCommentsByArticleId (req, res, next) {
         selectArticleById(article_id)
     ]
     Promise.all(promises).then((resolutions) => {
-        if (resolutions[0].length === 0) {
-            return Promise.reject({status: 404, msg: "No comments found"})
-        }
-        else {
-            const sortedArray = resolutions[0]
-            res.status(200).send( sortedArray )
-        }
-
+        const sortedArray = resolutions[0]
+        res.status(200).send( sortedArray )
+        
     }).catch((err) => {
         next(err)
     })

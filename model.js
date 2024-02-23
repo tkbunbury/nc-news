@@ -22,7 +22,6 @@ selectArticleById = async (article_id) => {
     if (!article) {
         return Promise.reject({
             status: 404,
-            msg: `NO article found for article_id: ${article_id}`
         })
     }
     const articleWithString = { ...article, created_at: new Date(article.created_at).toISOString() };
@@ -42,13 +41,6 @@ selectArticles = async () => {
 selectCommentsByArticleId = async (article_id) => {
     const result = await db.query('SELECT * FROM comments WHERE article_id = $1;', [article_id])
     const comments = result.rows
-    if (!comments) {
-        return Promise.reject({
-            status: 404,
-            msg: `NO article found for article_id: ${article_id}`
-        })
-    }
-
     const sortedComments = [...comments]
     sortedComments.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
     return sortedComments
