@@ -13,9 +13,81 @@ This project uses __Husky__ to ensure that broken code is not committed. Husky s
 
 ## Getting Started
 
+Link to the hosted version of this API ⤵️
+
+    https://takai-nc-news.onrender.com/api
+
+
+### Cloning the Repository
+
+To clone the repository, follow these steps:
+
+```bash
+git clone https://github.com/tkbunbury/nc-news.git
+cd nc-news
+```
+
+### Installing Dependencies
+
+To install the project dependencies, run the following command:
+
+```bash
+npm install
+```
+
+### Seeding the Local Database
+
+To seed the local database with initial data, follow these steps:
+
+1. Make sure you have PostgreSQL installed and running on your local machine.
+2. Navigate to the project's root directory.
+3. Run the seed script:
+
+```bash
+npm run seed
+```
+
+### Running Tests
+
+To run the tests for the project, use the following command:
+
+```bash
+npm test
+```
+
 If you wish to clone your project and run it locally you will need to create environmental variables.
 
-You will need to create two __.env files__ for your project: __.env.test__ and __.env.development__. Into each, add __PGDATABASE=__, with the correct database name for that environment (see /db/setup.sql for the database names). Double check that these .env files are __.gitignored__.
+
+
+### Environment Variables
+
+To run the project locally, you need to set up two `.env` files: `.env.test` and `.env.development`. Here's how to create them:
+
+1. Create a `.env.test` file with the following content:
+
+
+```bash
+PGDATABASE=test_database_name
+```
+
+2. Create a `.env.development` file with the following content:
+
+
+
+```bash
+PGDATABASE=development_database_name     
+```
+
+
+Replace `test_database_name` and `development_database_name` with the appropriate database names as specified in `/db/setup.sql`. Make sure to also add these `.env` files to your `.gitignore` to avoid committing them to your repository.
+
+### Minimum Requirements
+
+To run the project, you need to have the following installed:
+
+- Node.js (minimum version v21.5.0)
+- PostgreSQL (minimum version v8.7.3)
+
 
 ## Main Features
 
