@@ -330,3 +330,20 @@ describe('/api/users', () => {
         });
     });
 });
+
+
+describe('/api/articles?topic=${topic}', () => {
+    test('GET:200 sends an array of article objects filtered by topic to the client', () => {
+        const topic = 'mitch';
+        return request(app)
+        .get(`/api/articles?topic=${topic}`)
+        .expect(200)
+        .then((response) => {
+        expect(response.body.articles.length).toBeGreaterThan(0);
+        expect(Array.isArray(response.body.articles)).toBe(true);
+        response.body.articles.forEach((article) => {
+            expect(article.topic).toBe(topic);
+        });
+        });
+    });
+});

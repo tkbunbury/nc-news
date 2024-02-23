@@ -1,5 +1,4 @@
 const express = require('express');
-const { postNewCommentForArticle } = require('./model');
 const app = express();
 const {
     getTopics,
@@ -33,6 +32,8 @@ app.patch('/api/articles/:article_id', patchArticleVotes)
 app.delete('/api/comments/:comment_id', deleteCommentById)
 
 app.get('/api/users', getUsers)
+
+// app.get('/api/articles', getArticlesByTopic)
 
 app.use((err, req, res, next) => {
     if (err.code === "22P02" || err.code === "23502") {
