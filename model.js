@@ -28,10 +28,17 @@ selectArticleById = async (article_id) => {
     return articleWithString;
 }
 
-selectArticles = async () => {
+selectArticles = async (topic = {}) => {
 
-    const result = await db.query('SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.body) AS INTEGER) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url ;')
-    
+    let result;
+
+    if (typeof topic === 'string' && topic.trim() !== '') {
+        result = await db.query('SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.body) AS INTEGER) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE topic = $1 GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url ;', [topic])
+    }
+    else {
+        result = await db.query('SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.body) AS INTEGER) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url ;')
+    }
+
     const articles = result.rows;
     const sortedArticles = [...articles];
     sortedArticles.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
@@ -83,4 +90,21 @@ selectUsers = async () => {
 }
 
 
-module.exports = { selectTopics, readEndpointsFile, selectArticleById, selectArticles, selectCommentsByArticleId, postNewCommentForArticle, updateArticleVotes, removeCommentById, selectUsers };
+// selectArticlesByTopic = async (topic) => {
+
+//     if (topic) {
+
+//         const result = await db.query('SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.body) AS INTEGER) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE topic = $1 GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url ;', [topic])
+//     }
+//     else {
+//         const result = await db.query('SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.body) AS INTEGER) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url ;')
+//     }
+
+//     const articles = result.rows;
+//     const sortedArticles = [...articles];
+//     sortedArticles.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+//     return sortedArticles;
+// }
+
+
+module.exports = { selectTopics, readEndpointsFile, selectArticleById, selectArticles, selectCommentsByArticleId, postNewCommentForArticle, updateArticleVotes, removeCommentById, selectUsers }

@@ -45,8 +45,16 @@ async function getArticleById (req, res, next) {
 
 async function getArticles (req, res, next) {
     try{
-        const articles = await selectArticles();
-        res.status(200).send({ articles })
+        const { topic } = req.query;
+
+        if (topic) {
+            const articles = await selectArticles(topic);
+            res.status(200).send({ articles })
+        }
+        else {
+            const articles = await selectArticles();
+            res.status(200).send({ articles })
+        }
     }
     catch (err) {
         next(err)
@@ -114,6 +122,24 @@ async function getUsers (req, res, next) {
         next(err)
     }
 }
+
+// async function getArticlesByTopic (req, res, next) {
+
+//     console.log('HELLLOOOOOO')
+//     try{
+//         const { topic } = req.query;
+//         console.log('HELLOOOOOO')
+
+//         console.log({ topic }, '<<<< query in controller')
+
+
+//         const articles = await selectArticlesByTopic(topic);
+//         res.status(200).send({ articles })
+//     }
+//     catch (err) {
+//         next(err)
+//     }
+// }
 
 
 module.exports = { getTopics, getEndpoints, getArticleById, getArticles, getCommentsByArticleId, postSingleCommentForArticle, patchArticleVotes, deleteCommentById, getUsers };
