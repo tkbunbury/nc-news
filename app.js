@@ -33,8 +33,6 @@ app.delete('/api/comments/:comment_id', deleteCommentById)
 
 app.get('/api/users', getUsers)
 
-// app.get('/api/articles', getArticlesByTopic)
-
 app.use((err, req, res, next) => {
     if (err.code === "22P02" || err.code === "23502") {
         res.status(400).send({ msg: 'Bad request' });

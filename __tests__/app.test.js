@@ -373,3 +373,25 @@ describe('/api/articles?topic=${topic}', () => {
         });
     });
 });
+
+describe('/api/articles/:article_id(comment_count)', () => {
+    test('GET 200: Responds with object containing the article, with comment count property', () => {
+        return request(app)
+        .get('/api/articles/3')
+        .expect(200)
+        .then((response) => {
+            expect(typeof response.body.article).toBe("object");
+            expect(response.body.article).toMatchObject({
+                article_id: 3,
+                title: "Eight pug gifs that remind me of mitch",
+                topic: "mitch",
+                votes: 0,
+                author: "icellusedkars",
+                body:"some gifs",
+                article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                comment_count: 2
+            })
+            expect(typeof response.body.article.created_at).toBe("string");
+        });
+    });
+});
