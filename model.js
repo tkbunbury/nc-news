@@ -31,7 +31,9 @@ selectArticleById = async (article_id) => {
 selectArticles = async (topic = {}) => {
 
     let result;
-    const validTopics = topicData.map(topic => topic.slug);
+    const topics = await selectTopics()
+    const validTopics = topics.map(topic => topic.slug);
+
     let queryString = 'SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.body) AS INTEGER) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id'
 
     if (typeof topic === 'string' && topic.trim() !== '') {
