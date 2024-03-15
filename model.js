@@ -67,10 +67,10 @@ selectArticles = async (topic = {}, sortBy = 'created_at', order = 'desc') => {
             sortedArticles.sort((a, b) => b.votes - a.votes);
             break;
         case 'title':
-            sortedArticles.sort((a, b) => a.title.localeCompare(b.title));
+            sortedArticles.sort((a, b) => b.title.localeCompare(a.title));
             break;
         case 'author':
-            sortedArticles.sort((a, b) => a.author.localeCompare(b.author));
+            sortedArticles.sort((a, b) => b.author.localeCompare(a.author));
             break;
         default:
             break;
