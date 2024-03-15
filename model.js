@@ -28,9 +28,10 @@ selectArticleById = async (article_id) => {
     return articleWithString;
 }
 
-selectArticles = async (topic = {}) => {
+selectArticles = async (topic = {}, sortBy = 'created_at', order = 'desc') => {
 
     let result;
+
     const topics = await selectTopics()
     const validTopics = topics.map(topic => topic.slug);
 
@@ -54,7 +55,31 @@ selectArticles = async (topic = {}) => {
     }
     const articles = result.rows;
     const sortedArticles = [...articles];
-    sortedArticles.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+
+    switch (sortBy) {
+        case 'created_at':
+            sortedArticles.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            break;
+        case 'comment_count':
+            sortedArticles.sort((a, b) => b.comment_count - a.comment_count);
+            break;
+        case 'votes':
+            sortedArticles.sort((a, b) => b.votes - a.votes);
+            break;
+        case 'title':
+            sortedArticles.sort((a, b) => a.title.localeCompare(b.title));
+            break;
+        case 'author':
+            sortedArticles.sort((a, b) => a.author.localeCompare(b.author));
+            break;
+        default:
+            break;
+    }
+
+    if (order === 'asc') {
+        sortedArticles.reverse();
+    }
+
     return sortedArticles;
 }
 

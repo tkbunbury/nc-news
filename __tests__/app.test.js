@@ -395,3 +395,71 @@ describe('/api/articles/:article_id(comment_count)', () => {
         });
     });
 });
+
+describe('/api/articles', () => {
+    describe('Sorting by valid columns', () => {
+        test('GET:200 sends an array of article objects sorted by votes in descending order', () => {
+            return request(app)
+                .get('/api/articles?sort_by=votes&order=desc')
+                .expect(200)
+                .then((response) => {
+                    const articles = response.body.articles;
+                    expect(articles).toBeSortedBy('votes', {
+                        descending: true,
+                        coerce: true,
+                    });
+                });
+        });
+        test('GET:200 sends an array of article objects sorted by author in ascending order', () => {
+            return request(app)
+                .get('/api/articles?sort_by=author&order=asc')
+                .expect(200)
+                .then((response) => {
+                    const articles = response.body.articles;
+                    expect(articles).toBeSortedBy('author', {
+                        ascending: true,
+                        coerce: true,
+                    });
+                });
+        });
+        test('GET:200 sends an array of article objects sorted by comment count in descending order', () => {
+            return request(app)
+                .get('/api/articles?sort_by=comment_count&order=desc')
+                .expect(200)
+                .then((response) => {
+                    const articles = response.body.articles;
+                    expect(articles).toBeSortedBy('comment_count', {
+                        descending: true,
+                        coerce: true,
+                    });
+                });
+        });
+        test('GET:200 sends an array of article objects sorted by title in ascending order', () => {
+            return request(app)
+                .get('/api/articles?sort_by=title&order=asc')
+                .expect(200)
+                .then((response) => {
+                    const articles = response.body.articles;
+                    expect(articles).toBeSortedBy('title', {
+                        ascending: true,
+                        coerce: true,
+                    });
+                });
+        });
+    });
+
+    describe('Sorting order', () => {
+        test('Articles are sorted in ascending order based on created_at date', () => {
+            return request(app)
+            .get('/api/articles?sort_by=created_at&order=asc')
+            .expect(200)
+            .then((response) => {
+                const articles = response.body.articles;
+                expect(articles).toBeSortedBy('created_at', { 
+                    ascending: true,
+                    coerce: true,
+                });
+            });
+        });
+    });
+});
